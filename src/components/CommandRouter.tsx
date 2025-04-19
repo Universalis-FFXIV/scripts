@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { Text } from "ink";
-import { useState, useEffect } from "react";
+import { Text, useApp } from "ink";
 
 export interface CommandRouterProps {
   params: unknown[];
@@ -8,19 +7,15 @@ export interface CommandRouterProps {
   command: Command;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const CommandRouter = (props: CommandRouterProps) => {
-  const [counter, setCounter] = useState(0);
+  const { exit } = useApp();
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCounter((previousCounter) => previousCounter + 1);
-    }, 100);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  return <Text color="green">{counter} tests passed</Text>;
+  switch (props.command.name()) {
+    case "update-opcodes":
+      return <Text>TODO</Text>;
+    case "test":
+      return <Text>Hello, world!</Text>;
+    default:
+      return <>{exit()}</>;
+  }
 };

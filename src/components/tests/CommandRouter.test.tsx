@@ -1,19 +1,16 @@
-import { render } from "ink-testing-library";
 import { describe, it } from "node:test";
 import { CommandRouter } from "../CommandRouter";
 import { Command } from "commander";
 import assert from "node:assert";
+import { renderAndAssert } from "@/test-utils";
 
 describe("CommandRouter", () => {
   it("renders successfully", () => {
-    const { stdout, unmount } = render(
+    renderAndAssert(
       <CommandRouter params={[]} options={{}} command={new Command("test")} />,
+      ({ stdout }) => {
+        assert.strictEqual(stdout.lastFrame(), "Hello, world!");
+      },
     );
-
-    try {
-      assert.notEqual(stdout.lastFrame(), "");
-    } finally {
-      unmount();
-    }
   });
 });

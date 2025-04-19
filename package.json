@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Management scripts for Universalis",
   "type": "module",
-  "main": "./src/index.mts",
+  "main": "./src/umgmt.mts",
   "bin": {
-    "umgmt": "./bin/index.mjs"
+    "umgmt": "./bin/umgmt.mjs"
   },
   "engines": {
     "node": ">=21.0.0"

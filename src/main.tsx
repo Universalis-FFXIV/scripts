@@ -1,6 +1,6 @@
 import { render } from "ink";
 import { Command, program } from "commander";
-import { CommandRouter } from "./components/CommandRouter";
+import { CommandRouter } from "./components/CommandRouter.js";
 
 async function runCommand(...args: unknown[]) {
   const params: unknown[] = args.slice(0, args.length - 2);

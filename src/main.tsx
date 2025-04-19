@@ -1,26 +1,28 @@
-import { useState, useEffect } from "react";
-import { render, Text } from "ink";
+import { render } from "ink";
+import { Command, program } from "commander";
+import { CommandRouter } from "./components/CommandRouter";
 
-const Counter = () => {
-  const [counter, setCounter] = useState(0);
+async function runCommand(...args: unknown[]) {
+  const params: unknown[] = args.slice(0, args.length - 2);
+  const options = args[args.length - 2] as Record<string, string>;
+  const command = args[args.length - 1] as Command;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCounter((previousCounter) => previousCounter + 1);
-    }, 100);
+  // Render the application and wait until it completes or is terminated manually
+  const { unmount, waitUntilExit } = render(
+    <CommandRouter params={params} options={options} command={command} />,
+  );
 
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  process.on("SIGINT", unmount);
+  process.on("SIGTERM", unmount);
 
-  return <Text color="green">{counter} tests passed</Text>;
-};
+  await waitUntilExit();
+}
 
-// Render the application and wait until it completes or is terminated manually
-const { unmount, waitUntilExit } = render(<Counter />);
+program
+  .command("update-opcodes")
+  .description(
+    "Updates the universalis_act_plugin opcodes using the latest data from FFXIVOpcodes.",
+  )
+  .action(runCommand);
 
-process.on("SIGINT", unmount);
-process.on("SIGTERM", unmount);
-
-await waitUntilExit();
+await program.parseAsync();

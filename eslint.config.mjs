@@ -28,14 +28,17 @@ export default defineConfig([
         ...globals.node,
       },
     },
-    rules: {
-      "import-x/extensions": ["error", { ignorePackages: true, js: "always" }],
-    },
   },
   configs.recommended,
   pluginReact.configs.flat.recommended,
   pluginReact.configs.flat["jsx-runtime"],
   pluginImportX.flatConfigs.recommended,
   pluginImportX.flatConfigs.typescript,
+  pluginImportX.flatConfigs.react,
   eslintConfigPrettier,
+  {
+    rules: {
+      "import-x/extensions": ["error"],
+    },
+  },
 ]);

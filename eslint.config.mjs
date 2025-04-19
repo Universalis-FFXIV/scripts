@@ -10,7 +10,7 @@ import { createTypeScriptImportResolver } from "eslint-import-resolver-typescrip
 export default defineConfig([
   {
     files: ["**/*.{js,mjs,jsx,ts,mts,tsx}"],
-    ignore: ["bin/**/*"],
+    ignores: ["bin/**/*"],
     plugins: { js },
     extends: ["js/recommended"],
     settings: {

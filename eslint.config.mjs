@@ -36,9 +36,4 @@ export default defineConfig([
   pluginImportX.flatConfigs.typescript,
   pluginImportX.flatConfigs.react,
   eslintConfigPrettier,
-  {
-    rules: {
-      "import-x/extensions": ["error"],
-    },
-  },
 ]);

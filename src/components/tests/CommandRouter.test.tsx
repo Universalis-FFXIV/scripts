@@ -1,8 +1,8 @@
 import { describe, it } from "node:test";
-import { CommandRouter } from "../CommandRouter";
+import { CommandRouter } from "../CommandRouter.js";
 import { Command } from "commander";
 import assert from "node:assert";
-import { renderAndAssert } from "@/test-utils";
+import { renderAndAssert } from "@/test-utils/index.js";
 
 describe("CommandRouter", () => {
   it("renders successfully", () => {

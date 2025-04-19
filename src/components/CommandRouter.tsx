@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { Text, useApp } from "ink";
+import { UpdateOpcodes } from "./commands/UpdateOpcodes.js";
 
 export interface CommandRouterProps {
   params: unknown[];
@@ -7,12 +8,18 @@ export interface CommandRouterProps {
   command: Command;
 }
 
-export const CommandRouter = (props: CommandRouterProps) => {
+export const CommandRouter = ({
+  params,
+  options,
+  command,
+}: CommandRouterProps) => {
   const { exit } = useApp();
 
-  switch (props.command.name()) {
+  switch (command.name()) {
     case "update-opcodes":
-      return <Text>TODO</Text>;
+      return (
+        <UpdateOpcodes params={params} options={options} command={command} />
+      );
     case "test":
       return <Text>Hello, world!</Text>;
     default:

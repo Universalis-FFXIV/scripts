@@ -6,6 +6,7 @@ import * as pluginImportX from "eslint-plugin-import-x";
 import globals from "globals";
 import { defineConfig } from "eslint/config";
 import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
+import * as reactHooks from "eslint-plugin-react-hooks";
 
 export default defineConfig([
   {
@@ -35,5 +36,6 @@ export default defineConfig([
   pluginImportX.flatConfigs.recommended,
   pluginImportX.flatConfigs.typescript,
   pluginImportX.flatConfigs.react,
+  reactHooks.configs["recommended-latest"],
   eslintConfigPrettier,
 ]);

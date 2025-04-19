@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "bin",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
+  }
+}

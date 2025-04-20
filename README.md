@@ -1,2 +1,3 @@
-# scripts
-Management scripts
+# `@universalis/scripts`
+
+Management scripts for Universalis.

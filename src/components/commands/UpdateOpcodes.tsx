@@ -1,9 +1,13 @@
-import { UpdateOpcodesHandler } from "@/services/UpdateOpcodesHandler.js";
+import { useRefLazy } from "@/hooks/index.js";
+import {
+  UpdateOpcodesHandler,
+  UpdateOpcodesHandlerProgressStep,
+} from "@/services/UpdateOpcodesHandler.js";
 import { Command } from "commander";
-import { Text, useApp } from "ink";
+import { Box, Static, Text, useApp } from "ink";
 import { mkdtempSync } from "node:fs";
 import { rm } from "node:fs/promises";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface UpdateOpcodesProps {
   params: unknown[];
@@ -11,41 +15,74 @@ export interface UpdateOpcodesProps {
   command: Command;
 }
 
+function getStepText(step: UpdateOpcodesHandlerProgressStep) {
+  switch (step) {
+    case "clone":
+      return "Cloning repository...";
+    case "update":
+      return "Updating opcode definitions...";
+    case "commit":
+      return "Committing changed files...";
+    case "push":
+      return "Pushing to repository...";
+  }
+}
+
+function getCompletedStepText(step: UpdateOpcodesHandlerProgressStep) {
+  switch (step) {
+    case "clone":
+      return "Cloned repository";
+    case "update":
+      return "Updated opcode definitions";
+    case "commit":
+      return "Committed changed files";
+    case "push":
+      return "Pushed to repository";
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const UpdateOpcodes = (props: UpdateOpcodesProps) => {
-  const [status, setStatus] = useState("working");
+export const UpdateOpcodes = (_props: UpdateOpcodesProps) => {
   const { exit } = useApp();
+  const [progress, setProgress] = useState<UpdateOpcodesHandlerProgressStep[]>(
+    [],
+  );
+  const lastCompletedStep = progress.at(-1);
 
-  const tempDirRef = useRef<string | null>(null);
-
-  const getTempDir = useCallback(() => {
-    if (tempDirRef.current !== null) {
-      return tempDirRef.current;
-    }
-    const tempDir = mkdtempSync("umgmt-");
-    console.log(tempDir); // temporary
-    tempDirRef.current = tempDir;
-    return tempDir;
-  }, []);
-
-  const handlerRef = useRef<UpdateOpcodesHandler | null>(null);
-
-  const getHandler = useCallback(() => {
-    if (handlerRef.current !== null) {
-      return handlerRef.current;
-    }
-    const handler = new UpdateOpcodesHandler(getTempDir());
-    handlerRef.current = handler;
-    return handler;
-  }, [getTempDir]);
+  const tempDir = useRefLazy(() => mkdtempSync("umgmt-"));
+  const handler = useRefLazy(
+    () =>
+      new UpdateOpcodesHandler(tempDir(), ({ step }) =>
+        setProgress((steps) => [...steps, step]),
+      ),
+  );
 
   useEffect(() => {
-    getHandler()
+    handler()
       .updateOpcodes()
-      .then(() => setStatus("done"))
-      .then(() => rm(getTempDir(), { recursive: true, force: true }))
-      .then(() => setTimeout(exit, 3000));
-  }, [exit, getHandler, getTempDir]);
+      .then(() => rm(tempDir(), { recursive: true, force: true }))
+      .then(() => exit());
+  }, [exit, handler, tempDir]);
 
-  return <Text>{status}</Text>;
+  return (
+    <>
+      <Static items={progress}>
+        {(step) => (
+          <Box key={step}>
+            <Text dimColor>{getStepText(step)}</Text>
+          </Box>
+        )}
+      </Static>
+
+      <Box>
+        <Text bold color="green">
+          {lastCompletedStep
+            ? lastCompletedStep !== "push"
+              ? getCompletedStepText(lastCompletedStep)
+              : "Done!"
+            : ""}
+        </Text>
+      </Box>
+    </>
+  );
 };

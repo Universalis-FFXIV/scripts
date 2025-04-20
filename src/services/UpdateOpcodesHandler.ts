@@ -8,17 +8,39 @@ const opcodesUrl =
 
 const definitionsFileName = "definitions.json";
 
+export type UpdateOpcodesHandlerProgressStep =
+  | "clone"
+  | "update"
+  | "commit"
+  | "push";
+
+interface UpdateOpcodesHandlerProgress {
+  step: UpdateOpcodesHandlerProgressStep;
+}
+
 export class UpdateOpcodesHandler {
   private readonly git: SimpleGit;
 
-  constructor(private readonly repoDir: string) {
+  constructor(
+    private readonly repoDir: string,
+    private readonly onProgress: (
+      progress: UpdateOpcodesHandlerProgress,
+    ) => void,
+  ) {
     this.git = simpleGit(repoDir);
   }
 
   async updateOpcodes() {
+    this.onProgress({ step: "clone" });
     await this.cloneRepo();
+
+    this.onProgress({ step: "update" });
     await this.updateDefinitions();
+
+    this.onProgress({ step: "commit" });
     await this.commitDefinitions();
+
+    this.onProgress({ step: "push" });
     await this.push();
   }
 

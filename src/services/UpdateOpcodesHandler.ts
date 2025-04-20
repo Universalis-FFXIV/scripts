@@ -9,14 +9,8 @@ const targetRepoUrl = "https://github.com/goaaats/universalis_act_plugin.git";
 const targetRepoName = "universalis_act_plugin";
 const definitionsFileName = "definitions.json";
 
-export type UpdateOpcodesHandlerProgressStep =
-  | "clone"
-  | "update"
-  | "commit"
-  | "push";
-
 interface UpdateOpcodesHandlerProgress {
-  step: UpdateOpcodesHandlerProgressStep;
+  message: string;
 }
 
 export class UpdateOpcodesHandler {
@@ -28,17 +22,21 @@ export class UpdateOpcodesHandler {
   ) {}
 
   async updateOpcodes() {
-    this.onProgress({ step: "clone" });
+    this.onProgress({ message: "Cloning repository..." });
     await this.cloneRepo();
+    this.onProgress({ message: "Cloned repository" });
 
-    this.onProgress({ step: "update" });
+    this.onProgress({ message: "Updating opcode definitions..." });
     await this.updateDefinitions();
+    this.onProgress({ message: "Updated opcode definitions" });
 
-    this.onProgress({ step: "commit" });
+    this.onProgress({ message: "Committing changed files..." });
     await this.commitDefinitions();
+    this.onProgress({ message: "Committed changed files" });
 
-    this.onProgress({ step: "push" });
+    this.onProgress({ message: "Pushing to repository..." });
     await this.push();
+    this.onProgress({ message: "Done!" });
   }
 
   private get definitionsPath() {

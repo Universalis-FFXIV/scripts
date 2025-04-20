@@ -8,18 +8,12 @@ export interface CommandRouterProps {
   command: Command;
 }
 
-export const CommandRouter = ({
-  params,
-  options,
-  command,
-}: CommandRouterProps) => {
+export const CommandRouter = ({ command }: CommandRouterProps) => {
   const { exit } = useApp();
 
   switch (command.name()) {
     case "update-opcodes":
-      return (
-        <UpdateOpcodes params={params} options={options} command={command} />
-      );
+      return <UpdateOpcodes />;
     case "test":
       return <Text>Hello, world!</Text>;
     default:

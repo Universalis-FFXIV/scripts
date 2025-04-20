@@ -5,7 +5,8 @@ import assert from "node:assert";
 
 const opcodesUrl =
   "https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json";
-
+const targetRepoUrl = "https://github.com/goaaats/universalis_act_plugin.git";
+const targetRepoName = "universalis_act_plugin";
 const definitionsFileName = "definitions.json";
 
 export type UpdateOpcodesHandlerProgressStep =
@@ -45,25 +46,19 @@ export class UpdateOpcodesHandler {
   }
 
   private get definitionsPath() {
-    return path.join(
-      this.repoDir,
-      "universalis_act_plugin",
-      definitionsFileName,
-    );
+    return path.join(targetRepoName, definitionsFileName);
   }
 
   private async cloneRepo() {
-    await this.git.clone(
-      "https://github.com/goaaats/universalis_act_plugin.git",
-    );
+    await this.git.clone(targetRepoUrl);
   }
 
   private async updateDefinitions() {
-    await updateOpcodes(this.definitionsPath);
+    await updateOpcodes(path.join(this.repoDir, this.definitionsPath));
   }
 
   private async commitDefinitions() {
-    await this.git.add(`universalis_act_plugin/${definitionsFileName}`);
+    await this.git.add(this.definitionsPath);
     await this.git.commit("Update opcodes");
   }
 

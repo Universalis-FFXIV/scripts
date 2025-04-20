@@ -1,9 +1,11 @@
 import { GitRepository } from "./GitRepository.js";
 import path from "node:path";
+import { execa } from "execa";
 
 const tfRepoUrl = "https://github.com/Universalis-FFXIV/universalis-tf.git";
 const tfRepoName = "universalis-tf";
 const submodulePath = "images/universalis-act-nginx/universalis_act_plugin";
+const dockerImagePath = "images/universalis-act-nginx";
 
 interface UpdateOpcodesImageHandlerProgress {
   message: string;
@@ -34,6 +36,10 @@ export class UpdateOpcodesImageHandler {
     await this.pushTfRepo();
     this.onProgress({ message: "Pushed Terraform repository" });
 
+    this.onProgress({ message: "Building and pushing Docker image..." });
+    await this.buildAndPushDocker();
+    this.onProgress({ message: "Built and pushed Docker image" });
+
     this.onProgress({ message: "Done!" });
   }
 
@@ -60,5 +66,15 @@ export class UpdateOpcodesImageHandler {
 
   private async pushTfRepo() {
     await this.git.push();
+  }
+
+  private async buildAndPushDocker() {
+    const dockerDir = this.git.getFilePath(tfRepoName, dockerImagePath);
+    await execa({
+      cwd: dockerDir,
+    })`docker build . -t karashiiro/universalis-act-nginx`;
+    await execa({
+      cwd: dockerDir,
+    })`docker push karashiiro/universalis-act-nginx`;
   }
 }

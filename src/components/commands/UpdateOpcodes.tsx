@@ -1,4 +1,5 @@
 import { useRefLazy } from "@/hooks/index.js";
+import { GitRepository } from "@/services/GitRepository.js";
 import {
   UpdateOpcodesHandler,
   UpdateOpcodesHandlerProgressStep,
@@ -50,10 +51,12 @@ export const UpdateOpcodes = (_props: UpdateOpcodesProps) => {
   const lastCompletedStep = progress.at(-1);
 
   const tempDir = useRefLazy(() => mkdtempSync("umgmt-"));
+  const gitRepo = useRefLazy(() => new GitRepository(tempDir()));
   const handler = useRefLazy(
     () =>
-      new UpdateOpcodesHandler(tempDir(), ({ step }) =>
-        setProgress((steps) => [...steps, step]),
+      new UpdateOpcodesHandler(
+        ({ step }) => setProgress((steps) => [...steps, step]),
+        gitRepo(),
       ),
   );
 

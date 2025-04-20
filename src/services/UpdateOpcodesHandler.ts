@@ -1,4 +1,4 @@
-import { SimpleGit, simpleGit } from "simple-git";
+import { GitRepository } from "./GitRepository.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert";
@@ -20,16 +20,12 @@ interface UpdateOpcodesHandlerProgress {
 }
 
 export class UpdateOpcodesHandler {
-  private readonly git: SimpleGit;
-
   constructor(
-    private readonly repoDir: string,
     private readonly onProgress: (
       progress: UpdateOpcodesHandlerProgress,
     ) => void,
-  ) {
-    this.git = simpleGit(repoDir);
-  }
+    private readonly git: GitRepository,
+  ) {}
 
   async updateOpcodes() {
     this.onProgress({ step: "clone" });
@@ -54,7 +50,7 @@ export class UpdateOpcodesHandler {
   }
 
   private async updateDefinitions() {
-    await updateOpcodes(path.join(this.repoDir, this.definitionsPath));
+    await updateOpcodes(this.git.getFilePath(this.definitionsPath));
   }
 
   private async commitDefinitions() {

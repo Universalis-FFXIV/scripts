@@ -1,6 +1,7 @@
 import { useRefLazy } from "@/hooks/index.js";
 import { GitRepository } from "@/services/GitRepository.js";
 import { UpdateOpcodesHandler } from "@/services/UpdateOpcodesHandler.js";
+import { UpdateOpcodesImageHandler } from "@/services/UpdateOpcodesImageHandler.js";
 import { Command } from "commander";
 import { Box, Static, Text, useApp } from "ink";
 import { mkdtempSync } from "node:fs";
@@ -20,20 +21,28 @@ export const UpdateOpcodes = () => {
 
   const tempDir = useRefLazy(() => mkdtempSync("umgmt-"));
   const gitRepo = useRefLazy(() => new GitRepository(tempDir()));
-  const handler = useRefLazy(
+  const opcodesHandler = useRefLazy(
     () =>
       new UpdateOpcodesHandler(
         ({ message }) => setMessages((msgs) => [...msgs, message]),
         gitRepo(),
       ),
   );
+  const imageHandler = useRefLazy(
+    () =>
+      new UpdateOpcodesImageHandler(
+        ({ message }) => setMessages((msgs) => [...msgs, message]),
+        gitRepo(),
+      ),
+  );
 
   useEffect(() => {
-    handler()
+    opcodesHandler()
       .updateOpcodes()
+      .then(() => imageHandler().updateImage())
       .then(() => rm(tempDir(), { recursive: true, force: true }))
       .then(() => exit());
-  }, [exit, handler, tempDir]);
+  }, [exit, opcodesHandler, imageHandler, tempDir]);
 
   return (
     <>

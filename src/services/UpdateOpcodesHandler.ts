@@ -1,13 +1,11 @@
 import { GitRepository } from "./GitRepository.js";
 import fs from "node:fs/promises";
-import path from "node:path";
 import assert from "node:assert";
 
 const opcodesUrl =
   "https://raw.githubusercontent.com/karashiiro/FFXIVOpcodes/master/opcodes.min.json";
 const targetRepoUrl = "https://github.com/goaaats/universalis_act_plugin.git";
-const targetRepoName = "universalis_act_plugin";
-const definitionsFileName = "definitions.json";
+const definitionsPath = "universalis_act_plugin/definitions.json";
 
 interface UpdateOpcodesHandlerProgress {
   message: string;
@@ -22,9 +20,9 @@ export class UpdateOpcodesHandler {
   ) {}
 
   async updateOpcodes() {
-    this.onProgress({ message: "Cloning repository..." });
+    this.onProgress({ message: "Cloning ACT plugin repository..." });
     await this.cloneRepo();
-    this.onProgress({ message: "Cloned repository" });
+    this.onProgress({ message: "Cloned ACT plugin repository" });
 
     this.onProgress({ message: "Updating opcode definitions..." });
     await this.updateDefinitions();
@@ -34,13 +32,9 @@ export class UpdateOpcodesHandler {
     await this.commitDefinitions();
     this.onProgress({ message: "Committed changed files" });
 
-    this.onProgress({ message: "Pushing to repository..." });
+    this.onProgress({ message: "Pushing to ACT plugin repository..." });
     await this.push();
-    this.onProgress({ message: "Done!" });
-  }
-
-  private get definitionsPath() {
-    return path.join(targetRepoName, definitionsFileName);
+    this.onProgress({ message: "Pushed to ACT plugin repository" });
   }
 
   private async cloneRepo() {
@@ -48,11 +42,11 @@ export class UpdateOpcodesHandler {
   }
 
   private async updateDefinitions() {
-    await updateOpcodes(this.git.getFilePath(this.definitionsPath));
+    await updateOpcodes(this.git.getFilePath(definitionsPath));
   }
 
   private async commitDefinitions() {
-    await this.git.add(this.definitionsPath);
+    await this.git.add(definitionsPath);
     await this.git.commit("Update opcodes");
   }
 

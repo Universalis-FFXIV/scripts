@@ -2,7 +2,7 @@ import { SimpleGit, simpleGit } from "simple-git";
 import path from "node:path";
 
 export class GitRepository {
-  private readonly git: SimpleGit;
+  public readonly git: SimpleGit;
 
   constructor(private readonly repoDir: string) {
     this.git = simpleGit(repoDir);
@@ -22,6 +22,22 @@ export class GitRepository {
 
   async push() {
     await this.git.push();
+  }
+
+  async pull(remote?: string, branch?: string) {
+    if (remote && branch) {
+      await this.git.pull(remote, branch);
+    } else {
+      await this.git.pull();
+    }
+  }
+
+  async submoduleInit() {
+    await this.git.submoduleInit();
+  }
+
+  async submoduleUpdate() {
+    await this.git.submoduleUpdate(["--init"]);
   }
 
   getFilePath(...parts: string[]): string {

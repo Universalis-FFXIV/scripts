@@ -51,8 +51,8 @@ export class UpdateOpcodesImageHandler {
   private async updateSubmodule() {
     // Create a new git instance in the submodule directory
     const tfGit = new GitRepository(this.git.getFilePath(tfRepoName));
-    await tfGit.git.submoduleInit([submodulePath]);
-    await tfGit.git.submoduleUpdate([submodulePath]);
+    await tfGit.submoduleInit(submodulePath);
+    await tfGit.submoduleUpdate(submodulePath);
 
     const submoduleDir = path.join(tfRepoName, submodulePath);
     const submoduleGit = new GitRepository(this.git.getFilePath(submoduleDir));

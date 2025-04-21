@@ -17,6 +17,7 @@ export class UpdateOpcodesImageHandler {
       progress: UpdateOpcodesImageHandlerProgress,
     ) => void,
     private readonly git: GitRepository,
+    private readonly dryRun: boolean = false,
   ) {}
 
   async updateImage() {
@@ -65,14 +66,25 @@ export class UpdateOpcodesImageHandler {
   }
 
   private async pushTfRepo() {
+    if (this.dryRun) {
+      this.onProgress({ message: "[DRY RUN] Skipping git push" });
+      return;
+    }
     await this.git.push();
   }
 
   private async buildAndPushDocker() {
     const dockerDir = this.git.getFilePath(tfRepoName, dockerImagePath);
+
     await execa({
       cwd: dockerDir,
     })`docker build . -t karashiiro/universalis-act-nginx`;
+
+    if (this.dryRun) {
+      this.onProgress({ message: "[DRY RUN] Skipping docker push" });
+      return;
+    }
+
     await execa({
       cwd: dockerDir,
     })`docker push karashiiro/universalis-act-nginx`;

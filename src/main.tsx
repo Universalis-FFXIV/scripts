@@ -23,6 +23,11 @@ program
   .description(
     "Updates the universalis_act_plugin opcodes using the latest data from FFXIVOpcodes.",
   )
+  .option(
+    "--no-dry-run",
+    "Execute git push and docker push operations",
+    /* confusingly means dry-run by default */ true,
+  )
   .action(runCommand);
 
 await program.parseAsync();

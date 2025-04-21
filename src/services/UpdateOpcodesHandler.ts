@@ -17,6 +17,7 @@ export class UpdateOpcodesHandler {
       progress: UpdateOpcodesHandlerProgress,
     ) => void,
     private readonly git: GitRepository,
+    private readonly dryRun: boolean = false,
   ) {}
 
   async updateOpcodes() {
@@ -51,6 +52,10 @@ export class UpdateOpcodesHandler {
   }
 
   private async push() {
+    if (this.dryRun) {
+      this.onProgress({ message: "[DRY RUN] Skipping git push" });
+      return;
+    }
     await this.git.push();
   }
 }

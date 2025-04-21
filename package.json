@@ -15,7 +15,7 @@
     "build": "tsc --project tsconfig.dist.json",
     "lint": "tsc --noEmit && eslint src && prettier --check src",
     "fix": "eslint --fix src && prettier -w src",
-    "test": "tsx --test src/**/*.test.tsx"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -43,7 +43,8 @@
     "globals": "^16.0.0",
     "ink-testing-library": "^4.0.0",
     "prettier": "^3.5.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.30.1",
+    "vitest": "^1.4.0"
   },
   "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
 }

@@ -74,16 +74,16 @@ export class UpdateOpcodesImageHandler {
   }
 
   private async buildAndPushDocker() {
+    if (this.dryRun) {
+      this.onProgress({ message: "[DRY RUN] Skipping Docker operations" });
+      return;
+    }
+
     const dockerDir = this.git.getFilePath(tfRepoName, dockerImagePath);
 
     await execa({
       cwd: dockerDir,
     })`docker build . -t karashiiro/universalis-act-nginx`;
-
-    if (this.dryRun) {
-      this.onProgress({ message: "[DRY RUN] Skipping docker push" });
-      return;
-    }
 
     await execa({
       cwd: dockerDir,

@@ -59,7 +59,10 @@ export class UpdateOpcodesHandler {
       this.onProgress({ message: "[DRY RUN] Skipping git push" });
       return;
     }
-    await this.git.push();
+    const pluginGit = new GitRepository(
+      this.git.getFilePath("universalis_act_plugin"),
+    );
+    await pluginGit.push();
   }
 }
 

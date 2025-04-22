@@ -70,7 +70,8 @@ export class UpdateOpcodesImageHandler {
       this.onProgress({ message: "[DRY RUN] Skipping git push" });
       return;
     }
-    await this.git.push();
+    const tfGit = new GitRepository(this.git.getFilePath(tfRepoName));
+    await tfGit.push();
   }
 
   private async buildAndPushDocker() {

@@ -47,8 +47,11 @@ export class UpdateOpcodesHandler {
   }
 
   private async commitDefinitions() {
-    await this.git.add(definitionsPath);
-    await this.git.commit("Update opcodes");
+    const pluginGit = new GitRepository(
+      this.git.getFilePath("universalis_act_plugin"),
+    );
+    await pluginGit.add("definitions.json");
+    await pluginGit.commit("Update opcodes");
   }
 
   private async push() {
